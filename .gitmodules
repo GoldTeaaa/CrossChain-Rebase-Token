@@ -1,0 +1,6 @@
+[submodule "CrossChainToken/lib/forge-std"]
+	path = CrossChainToken/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "CrossChainToken/lib/openzeppelin-contracts"]
+	path = CrossChainToken/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
