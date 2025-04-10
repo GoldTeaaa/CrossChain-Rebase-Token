@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
  * @title RebaseToken
  *     @author Handay
  *     @notice This is a crosschain rebase token that incentivises users to deposit into a vault
- *     @notice The interest rate in the smart contract can only decreaes and the rebase token can 
+ *     @notice The interest rate in the smart contract can only decreaes and the rebase token can
  *     @notice Each user will have their own interest rate from their first join time to the protocol
  */
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -59,9 +59,10 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return super.balanceOf(user);
     }
 
-    function mint(address _to, uint256 _amount) external onlyRole(MINT_AND_BURN_ROLE) {
+    function mint(address _to, uint256 _amount, uint256 _userInterestRate) external onlyRole(MINT_AND_BURN_ROLE) {
         _mintAccruedInterest(_to);
-        s_userInterestRate[_to] = s_interestRate;
+        // s_userInterestRate[_to] = s_interestRate;
+        s_userInterestRate[_to] = _userInterestRate;
         _mint(_to, _amount);
     }
 
@@ -82,7 +83,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     function balanceOf(address _user) public view override returns (uint256) {
         // get the current principle balance of the user (the number of token that have actually been minted)
         uint256 principleBalance = super.balanceOf(_user);
-        if(principleBalance == 0){
+        if (principleBalance == 0) {
             return 0;
         }
         // multiply the principle balance by the interest rate that has accumulated in time
@@ -133,18 +134,18 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     }
 
     /**
-    @notice override the transfer function to add interest to the recipient and store the recipient interest rate
-    @param recipient The recipient of the tokens
-    @param amount The amount of tokens to transfer
+     * @notice override the transfer function to add interest to the recipient and store the recipient interest rate
+     * @param recipient The recipient of the tokens
+     * @param amount The amount of tokens to transfer
      */
     function transfer(address recipient, uint256 amount) public override returns (bool) {
         _mintAccruedInterest(msg.sender);
         _mintAccruedInterest(recipient);
 
-        if(amount == type(uint256).max){
+        if (amount == type(uint256).max) {
             amount = balanceOf(msg.sender);
         }
-        if(balanceOf(recipient) == 0){
+        if (balanceOf(recipient) == 0) {
             s_userInterestRate[recipient] = s_userInterestRate[msg.sender];
         }
         bool success = super.transfer(recipient, amount);
@@ -174,4 +175,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return s_userInterestRate[user];
     }
 
+    function getInterestRate() external view returns (uint256) {
+        return s_interestRate;
+    }
 }
