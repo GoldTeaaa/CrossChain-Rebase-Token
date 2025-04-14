@@ -7,3 +7,6 @@
 [submodule "CrossChainToken/lib/ccip"]
 	path = CrossChainToken/lib/ccip
 	url = https://github.com/smartcontractkit/ccip
+[submodule "CrossChainToken/lib/chainlink-local"]
+	path = CrossChainToken/lib/chainlink-local
+	url = https://github.com/smartcontractkit/chainlink-local
